@@ -119,5 +119,18 @@ AI_Asistent/
 ├── config.py                # Konfiguratsiya va sozlamalar
 ├── main.py                  # Asosiy ishga tushirish fayli
 ├── requirements.txt         # Kutubxonalar ro'yxati
+├── Dockerfile               # Render bulutli serveri uchun Docker muhiti
 └── .env                     # Shaxsiy maxfiy kalitlar
 ```
+
+---
+
+## 🌐 Bulutli Serverga Joylashtirish (Render)
+
+Loyiha kompyuter oʻchiq boʻlganda ham 24/7 ishlashi uchun **Render** bulutli platformasiga Docker konteyneri orqali joylashtirilgan.
+
+- **GitHub Ombori:** [axadullayev01-commits/MyAsistent](https://github.com/axadullayev01-commits/MyAsistent)
+- **Render Dashboard:** [ai-asistent-bot boshqaruv paneli](https://dashboard.render.com/web/srv-db882con74is73e5k7ng)
+- **Konteynerlashtirish:** `Dockerfile` orqali Linux muhitida Python 3.12 va `FFmpeg` toʻliq oʻrnatiladi.
+- **StringSession:** Serverda qayta SMS tasdiqlash kodi talab etilmasligi uchun Telethon sessiyasi `STRING_SESSION` muhit oʻzgaruvchisi orqali xavfsiz boshqariladi.
+

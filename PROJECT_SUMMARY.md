@@ -53,8 +53,10 @@ AI_Asistent/
 ├── 📄 .env                    # Maxfiy kalitlar va konfiguratsiya (API_ID, API_HASH, GEMINI_API_KEY)
 ├── 📄 .env.example            # Sozlamalar namunasi
 ├── 📄 .gitignore              # Xavfsizlik uchun (.session, .env, .db fayllarini gitga chiqarmaslik)
+├── 📄 Dockerfile                # Render bulutli serveri uchun Docker muhiti (Python 3.12 + FFmpeg)
+├── 📄 .dockerignore            # Docker image ga ortiqcha fayllar tushmasligini ta'minlash
 ├── 📄 config.py               # Loyiha konfiguratsiyasi va whitelist tekshiruvi
-├── 📄 main.py                 # Asosiy ishga tushirish fayli (TelegramClient, UTF-8 konsol)
+├── 📄 main.py                 # Asosiy ishga tushirish fayli (TelegramClient, UTF-8 konsol, Health check)
 ├── 📄 requirements.txt        # Kerakli Python kutubxonalari
 ├── 📄 README.md               # Foydalanuvchi uchun tezkor qo'llanma
 ├── 📄 PROJECT_SUMMARY.md      # Ushbu to'liq texnik hujjat
@@ -115,6 +117,14 @@ AI_Asistent/
 4. **Xotira va Disk Tozaligi:**
    - Yuklab olingan audio/video fayllar AI tahlilidan soʻng `finally` blokida darhol diskdan oʻchirib tashlanadi (`_cleanup_files`).
 
+5. **Render Docker Muhitida `google-genai` Import Xatosi:**
+   - *Muammo:* `requirements.txt` da eski `google-generativeai` koʻrsatilgani tufayli Docker build paytida `from google import genai` chaqirilganda `ImportError: cannot import name 'genai' from 'google'` xatoligi yuz bergan.
+   - *Yechim:* `requirements.txt` fayliga `google-genai>=0.1.0` qoʻshildi va omborga qayta push qilindi.
+
+6. **Render Bepul Tarifida Port Scan Timeout:**
+   - *Muammo:* Render bepul (Free) tarifida faqat Web Service-larni qabul qiladi va konteyner belgilangan portda (`PORT=10000`) ulanishlarni kutmasa, uni xato deb oʻchirib qoʻyadi.
+   - *Yechim:* `main.py` ga yengil asinxron HTTP Health Check serveri qoʻshildi, bu orqali Render servisni uzluksiz `Live` holatda ushlab turadi.
+
 ---
 
 ## 🎮 6. Userbot Buyruqlari
@@ -131,9 +141,9 @@ AI_Asistent/
 
 ---
 
-## 🚀 7. Loyihani Qayta Ishga Tushirish
+## 🚀 7. Loyihani Mahalliy Qayta Ishga Tushirish
 
-Loyihani istalgan vaqtda ishga tushirish uchun PowerShell yoki CMD da quyidagi buyruq beriladi:
+Loyihani kompyuterda istalgan vaqtda ishga tushirish uchun PowerShell yoki CMD da quyidagi buyruq beriladi:
 
 ```powershell
 cd C:\Users\user\Desktop\AI_Asistent
@@ -141,3 +151,18 @@ python main.py
 ```
 
 *Birinchi kirishda yaratilgan `ai_userbot.session` fayli sababli qayta telefon raqam yoki kod soʻralmaydi.*
+
+---
+
+## 🌐 8. Bulutli Serverga Joylashtirish (Render & GitHub Deployment)
+
+Loyiha kompyuter oʻchiq boʻlganda ham 24/7 ishlashi uchun **Render** bulutli platformasiga Docker konteyneri orqali joylashtirildi.
+
+- **GitHub Ombori:** [axadullayev01-commits/MyAsistent](https://github.com/axadullayev01-commits/MyAsistent)
+- **Render Dashboard:** [ai-asistent-bot boshqaruv paneli](https://dashboard.render.com/web/srv-db882con74is73e5k7ng)
+- **Servis URL:** `https://ai-asistent-bot.onrender.com`
+- **Holati:** `Live` (24/7 faol)
+- **Konteynerlashtirish:** `Dockerfile` orqali Linux muhitida Python 3.12 va `FFmpeg` toʻliq integratsiya qilingan (audio/video xabarlarni serverda muammosiz konvertatsiya qilish uchun).
+- **Sessiya Boshqaruvi:** Serverda SMS kod kiritish talab etilmasligi uchun mahalliy Telegram sessiyasidan `StringSession` generatsiya qilinib, Render muhit oʻzgaruvchilariga (`STRING_SESSION`) kiritildi.
+- **Avtomatik Deploy (CI/CD):** GitHub repozitoriyasining `main` tarmogʻiga yangi oʻzgarishlar kiritilganda Render avtomatik ravishda yangi versiyani quradi va deploy qiladi.
+
