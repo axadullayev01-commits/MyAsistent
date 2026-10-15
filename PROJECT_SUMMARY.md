@@ -125,6 +125,9 @@ AI_Asistent/
    - *Muammo:* Render bepul (Free) tarifida faqat Web Service-larni qabul qiladi va konteyner belgilangan portda (`PORT=10000`) ulanishlarni kutmasa, uni xato deb oʻchirib qoʻyadi.
    - *Yechim:* `main.py` ga yengil asinxron HTTP Health Check serveri qoʻshildi, bu orqali Render servisni uzluksiz `Live` holatda ushlab turadi.
 
+7. **Foydalanuvchining Shaxsiy Yozish Uslubi va Tabiiy Muloqot Sozlamasi:**
+   - *Xususiyat:* Bot oʻzini robot yoki sunʼiy intellekt deb tanishtirmasligi, "Qanday yordam bera olaman?" kabi gaplarni aytmasligi uchun maxsus shaxsiy profil va qatʼiy qoidalar kiritildi. Bot akkaunt egasi nomidan Telegramda qisqa (1-2 gap), amaliy, "hullas", "bo'ldi", "ishdaman" kabi kundalik soʻzlardan foydalanib, xuddi band insondek javob qaytaradi. Moliyaviy va jiddiy masalalarda avtomatik oʻylab "Hozir band edim, keyinroq o'zim yozvoraman" deb javob beradi.
+
 ---
 
 ## 🎮 6. Userbot Buyruqlari
