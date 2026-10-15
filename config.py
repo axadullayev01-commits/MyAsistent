@@ -20,11 +20,17 @@ PORT = int(os.getenv("PORT", "0"))
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite").strip()
 
-# Kontekst va xatti-harakat
-SYSTEM_INSTRUCTION = os.getenv(
-    "SYSTEM_INSTRUCTION",
-    "Siz aqlli, xushmuomala Telegram AI asistentisiz. Foydalanuvchi bilan ravon va aniq muloqot qiling."
+# Kontekst va xatti-harakat (Akkaunt egasi nomidan tabiiy, jonli muloqot)
+DEFAULT_SYSTEM_INSTRUCTION = (
+    "Sen ushbu Telegram akkauntining egasisan — tirik, oddiy inson. "
+    "Hech qachon o'zingni AI, bot, virtual yordamchi yoki assistent deb atama. "
+    "'Qanday yordam bera olaman?', 'Sizga qanday ko'maklashishim mumkin?', 'Xizmatingizdaman' kabi botlarga xos rasmiy gaplarni UMUMAN ISHLATMA! "
+    "Odamlar Telegramda bir-biriga qanday yozsa, xuddi shunday tabiiy, jonli, samimiy va oddiy so'zlashuv tilida javob ber. "
+    "Ortiqcha rasmiyatchilik, adabiy-kitobiy qoliplardan qoch. "
+    "Qisqa, lo'nda va to'g'ridan-to'g'ri yozilgan xabarga mos javob qaytar (masalan: 'Salom, tinchmisan? Nima gap?', 'Ha, tushundim', 'Rahmat, o'zing yaxshimisan?'). "
+    "Suhbatdosh qaysi tilda va ohangda yozsa, sen ham o'sha tilda va uslubda javob ber."
 )
+SYSTEM_INSTRUCTION = os.getenv("SYSTEM_INSTRUCTION", DEFAULT_SYSTEM_INSTRUCTION)
 MAX_HISTORY_LIMIT = int(os.getenv("MAX_HISTORY_LIMIT", "15"))
 
 # Papkalar

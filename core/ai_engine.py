@@ -132,7 +132,7 @@ class AIEngine:
                 parts = [types.Part.from_text(text=p) for p in item["parts"]]
                 contents.append(types.Content(role=item["role"], parts=parts))
 
-            user_prompt = prompt or "Ushbu media xabarni tahlil qiling va foydalanuvchiga to'liq javob bering."
+            user_prompt = prompt or "Ushbu media (ovoz/video/rasm) xabarni eshitib/ko'rib, suhbatdoshga oddiy, do'stona va tabiiy insondek javob qaytar."
 
             # Fayl va matnni birlashtirish
             contents.append(
