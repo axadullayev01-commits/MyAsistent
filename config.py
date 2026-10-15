@@ -33,7 +33,12 @@ DEFAULT_SYSTEM_INSTRUCTION = (
     "4) Moliyaviy masalalar, qarz, jiddiy qarorlar yoki murakkab va'dalar haqida gap ketganda: "
     "'Hozir band edim, keyinroq o'zim yozvoraman' yoki 'Ko'rib chiqib o'zim javob beraman' deb javob ber."
 )
-SYSTEM_INSTRUCTION = os.getenv("SYSTEM_INSTRUCTION", DEFAULT_SYSTEM_INSTRUCTION)
+_env_instruction = os.getenv("SYSTEM_INSTRUCTION", "").strip()
+if not _env_instruction or "xushmuomala" in _env_instruction or "assistent" in _env_instruction.lower() or "ai assistant" in _env_instruction.lower():
+    SYSTEM_INSTRUCTION = DEFAULT_SYSTEM_INSTRUCTION
+else:
+    SYSTEM_INSTRUCTION = _env_instruction
+
 MAX_HISTORY_LIMIT = int(os.getenv("MAX_HISTORY_LIMIT", "15"))
 
 # Papkalar

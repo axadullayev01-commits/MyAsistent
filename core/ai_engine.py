@@ -1,4 +1,5 @@
 import os
+import re
 import logging
 from pathlib import Path
 from typing import Optional, List
@@ -9,6 +10,26 @@ from config import GEMINI_API_KEY, GEMINI_MODEL, SYSTEM_INSTRUCTION
 from database.context_manager import context_manager
 
 logger = logging.getLogger(__name__)
+
+
+def _clean_response(text: str) -> str:
+    """Robotona qoliplar va ortiqcha lutf-xushomadlarni javobdan tozalash."""
+    if not text:
+        return ""
+    patterns = [
+        r"(?i)(sizga\s+)?qanday\s+yordam\s+bera\s+olaman\??",
+        r"(?i)bugun\s+nima\s+haqida\s+gaplashamiz\??",
+        r"(?i)sizga\s+qanday\s+ko['`’]?maklashishim\s+mumkin\??",
+        r"(?i)nima\s+bilan\s+yordam\s+bera\s+olaman\??",
+        r"(?i)qanday\s+savolingiz\s+bor\??",
+    ]
+    cleaned = text
+    for p in patterns:
+        cleaned = re.sub(p, "", cleaned)
+    cleaned = cleaned.strip(" .,!?\n\r")
+    if not cleaned:
+        cleaned = "tinchlik, o'zingda nima gap?"
+    return cleaned
 
 
 class AIEngine:
@@ -74,8 +95,16 @@ class AIEngine:
             
             contents = []
             for item in history_rows:
-                parts = [types.Part.from_text(text=p) for p in item["parts"]]
-                contents.append(types.Content(role=item["role"], parts=parts))
+                # Eski tarixdagi robotona xabarlarni kontekstdan chiqarib tashlash
+                filtered_parts = []
+                for p in item["parts"]:
+                    p_lower = p.lower()
+                    if any(bad in p_lower for bad in ["qanday yordam", "yordam bera olaman", "nima haqida gaplashamiz", "assistent"]):
+                        continue
+                    filtered_parts.append(p)
+                if filtered_parts:
+                    parts = [types.Part.from_text(text=p) for p in filtered_parts]
+                    contents.append(types.Content(role=item["role"], parts=parts))
 
             # Joriy yangi xabarni qo'shish
             contents.append(
@@ -93,7 +122,8 @@ class AIEngine:
 
             response = await self._generate_content_with_fallback(contents, config)
 
-            reply_text = response.text or "Kechirasiz, javob generatsiya qilinmadi."
+            raw_reply = response.text or "tinchlik, o'zingda nima gap?"
+            reply_text = _clean_response(raw_reply)
 
             # Xabarlarni tarixga saqlash
             await context_manager.add_message(chat_id, "user", prompt)
@@ -129,8 +159,15 @@ class AIEngine:
             history_rows = await context_manager.get_history(chat_id)
             contents = []
             for item in history_rows:
-                parts = [types.Part.from_text(text=p) for p in item["parts"]]
-                contents.append(types.Content(role=item["role"], parts=parts))
+                filtered_parts = []
+                for p in item["parts"]:
+                    p_lower = p.lower()
+                    if any(bad in p_lower for bad in ["qanday yordam", "yordam bera olaman", "nima haqida gaplashamiz", "assistent"]):
+                        continue
+                    filtered_parts.append(p)
+                if filtered_parts:
+                    parts = [types.Part.from_text(text=p) for p in filtered_parts]
+                    contents.append(types.Content(role=item["role"], parts=parts))
 
             user_prompt = prompt or "Ushbu media (ovoz/video/rasm) xabarni eshitib/ko'rib, suhbatdoshga oddiy, do'stona va tabiiy insondek javob qaytar."
 
@@ -155,7 +192,8 @@ class AIEngine:
 
             response = await self._generate_content_with_fallback(contents, config)
 
-            reply_text = response.text or "Media tahlil qilindi, biroq javob bo'sh qaytdi."
+            raw_reply = response.text or "ko'rdim, bo'ldi"
+            reply_text = _clean_response(raw_reply)
 
             # Tarixga qo'shish
             log_prompt = f"[Media: {media_path.name}] {user_prompt}"
